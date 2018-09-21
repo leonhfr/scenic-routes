@@ -1,8 +1,8 @@
 'use strict';
 
 const redis = require('./redis');
-const buildDatabase = require('./build-database.model');
-const compileJson = require('./compile-json.model');
+const buildDatabase = require('../services/build-database.service');
+const compileJson = require('../services/compile-json.service');
 
 module.exports.getInterestsCount = async () => {
   // TODO: move the count to a JSON file prop
@@ -20,8 +20,7 @@ module.exports.getInterests = async () => {
   // eslint-disable-next-line
   console.log('get interests');
   // TODO: only get compiled JSON
-  const res = await compileJson();
-  return res;
+  return await compileJson();
 };
 
 module.exports.buildDatabase = buildDatabase;

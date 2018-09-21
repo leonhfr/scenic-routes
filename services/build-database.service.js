@@ -2,10 +2,10 @@
 
 const cliProgress = require('cli-progress');
 
-const redis = require('./redis');
-const flickrCall = require('../services/flickr.service');
+const redis = require('../models/redis');
+const flickrCall = require('./flickr.service');
 const lastMidnight = require('../utils/last-midnight.utils');
-const processBatch = require('./process-batch.model');
+const processBatch = require('./process-batch.service');
 
 const buildDatabase = async (flush) => {
   if (flush) {

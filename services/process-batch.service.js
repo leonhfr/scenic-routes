@@ -1,6 +1,6 @@
 'use strict';
 
-const redis = require('./redis');
+const redis = require('../models/redis');
 
 const processBatch = async (batch) => {
   // { page, pages, perpage, total, photo }
