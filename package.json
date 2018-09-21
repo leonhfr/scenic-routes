@@ -1,0 +1,57 @@
+{
+  "name": "scenic-routes",
+  "version": "0.0.1",
+  "private": true,
+  "description": "A JavaScript proof-of-concept for getting more interesting walking routes",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon app.js",
+    "start": "node app.js",
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/leonhfr/scenic-routes"
+  },
+  "keywords": [
+    "scenic",
+    "routes",
+    "flickr"
+  ],
+  "author": {
+    "name": "Leon Hollender",
+    "url": "https://github.com/leonhfr"
+  },
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/leonhfr/scenic-routes/issues"
+  },
+  "homepage": "https://github.com/leonhfr/scenic-routes#readme",
+  "engines": {
+    "node": "6.4.0",
+    "npm": "3.10.7"
+  },
+  "devDependencies": {
+    "eslint": "^5.6.0",
+    "eslint-plugin-json": "^1.2.1",
+    "eslint-plugin-react": "^7.11.1",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.18.4"
+  },
+  "dependencies": {
+    "atob": "^2.1.2",
+    "bcrypt": "^3.0.0",
+    "cli-progress": "^2.1.0",
+    "dotenv": "^6.0.0",
+    "flickr-sdk": "^3.7.0",
+    "ioredis": "^4.0.0",
+    "kcors": "^2.2.2",
+    "koa": "^2.5.3",
+    "koa-bodyparser": "^4.2.1",
+    "koa-compress": "^3.0.0",
+    "koa-logger": "^3.2.0",
+    "koa-mount": "^3.0.0",
+    "koa-router": "^7.4.0",
+    "koa-static": "^5.0.0"
+  }
+}
