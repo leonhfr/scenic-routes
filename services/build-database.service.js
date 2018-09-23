@@ -39,16 +39,17 @@ const buildDatabase = async (flush) => {
   const max_upload_date = lastMidnight();
   const min_upload_date = max_upload_date - year;
 
-  const target = 10000;
+  const target = 100000;
   const sort = 'interestingness-desc';
   const per_page = 250;
+  const pagesPerBatch = 20;
 
-  // GET FIRST BATCH TO KNOW HOW MANY CALLS WE HAVE TO MAKE
   // MAX 3600 calls / hour
-  const pages = Math.ceil(target / per_page);
-  bar.start(pages, 0);
+  const startPage = 80;
+  const targetBatch = 100;
+  bar.start(2 * (targetBatch - startPage), 0);
 
-  for (let i = 1; i <= pages; i++) {
+  for (let i = startPage + 1; i <= targetBatch; i++) {
     const batch = await flickrCall({
       bbox,
       sort,
@@ -56,8 +57,9 @@ const buildDatabase = async (flush) => {
       min_upload_date,
       per_page
     }, i);
-    await processBatch(batch, );
-    bar.update(i);
+    bar.increment(1);
+    await processBatch(batch, i);
+    bar.increment(1);
   }
   bar.stop();
 
@@ -71,6 +73,3 @@ const buildDatabase = async (flush) => {
 };
 
 module.exports = buildDatabase;
-
-// REDIS STRUCTURE
-// -pixel-long-lat (bottom left)

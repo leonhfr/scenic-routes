@@ -23,7 +23,7 @@ const flickrService = async (options, page) => {
     accuracy: 16,
     content_type: 1,
     media: 'photos',
-    extras: 'geo,views,url_m'
+    extras: 'geo,views,url_c,url_s'
   };
 
   const flickrOptions = Object.assign(constants, options);

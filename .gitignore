@@ -1,6 +1,7 @@
 # SCENIC ROUTES SPECIFICS
 
 data/
+nodemon.json
 
 # Logs
 logs

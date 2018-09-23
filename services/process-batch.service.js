@@ -2,25 +2,29 @@
 
 const redis = require('../models/redis');
 
-const processBatch = async (batch) => {
+const processBatch = async (batch, page) => {
   // { page, pages, perpage, total, photo }
   await Promise.all(batch.photo.map(async photo => {
     const lat  = parseFloat(photo.latitude);
     const long = parseFloat(photo.longitude);
-    const pixelLat  = Math.round(lat  * 10000);
-    const pixelLong = Math.round(long * 10000);
+    const pixelLat  = Math.round(lat  * 100000);
+    const pixelLong = Math.round(long * 100000);
     const key = `${global.redisPrefix}-pixel-${pixelLat}-${pixelLong}`;
 
-    const score = await redis.hget(key, 'score');
+    const score = await redis.hget(key, 'pics');
     if (score) {
-      await redis.hincrby(key, 'score', 1);
+      await redis.hincrby(key, 'pics', 1);
+      await redis.hincrby(key, 'views', photo.views);
     } else {
       await redis.hmset(key, {
-        score: 1,
+        pics: 1,
+        interest: page,
+        views: photo.views,
         id: photo.id,
-        url: photo.url_m,
-        size: `${photo.height_m}x${photo.width_m}`
+        urlc: photo.url_c,
+        urls: photo.url_s
       });
+      // TODO: title, .. to show the user on the map
     }
   }));
 };
