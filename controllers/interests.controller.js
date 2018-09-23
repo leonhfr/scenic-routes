@@ -19,11 +19,11 @@ module.exports.buildDatabase = async (ctx, next) => {
   } else ctx.status = 500;
 };
 
-module.exports.buildClusters = async (ctx, next) => {
+module.exports.buildInterests = async (ctx, next) => {
   // options:
   // - epsilon - neighborhood radius
   // - n pixels to create a cluster
-  ctx.body = await interestsModel.buildClusters(10, 2);
+  ctx.body = await interestsModel.buildInterests(12, 2);
   ctx.status = 200;
 };
 

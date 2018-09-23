@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const turfHelpers = require('@turf/helpers');
+const turf = require('@turf/turf');
 const redis = require('../models/redis');
 
 const dataFilePath = path.resolve(__dirname, '../data/heatmap.geo.json');
@@ -15,14 +15,14 @@ const compileHeatmap = async () => {
     const coords = key.split('-');
     const lat    = parseInt(coords[coords.length - 2]) / 100000;
     const long   = parseInt(coords[coords.length - 1]) / 100000;
-    const feature = turfHelpers.point(
+    const feature = turf.point(
       [ long, lat ],
       { score: Number(res[0]) }
     );
     features.push(feature);
   }));
   await pipeline.exec();
-  const data = turfHelpers.featureCollection(features);
+  const data = turf.featureCollection(features);
   const geojson = JSON.stringify(data);
   await fs.writeFile(dataFilePath, geojson, 'utf8', err => {
     if (err) throw err;

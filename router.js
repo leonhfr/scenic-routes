@@ -12,6 +12,6 @@ router.get('/map/boundaries', boundsController.getBoundaries);
 
 router.get('/interests/compile/heatmap', authMiddleware, interestsController.compileHeatmap);
 router.post('/interests/build/database', authMiddleware, interestsController.buildDatabase);
-router.post('/interests/build/clusters', authMiddleware, interestsController.buildClusters);
+router.post('/interests/build/interests', authMiddleware, interestsController.buildInterests);
 
 module.exports = router;
