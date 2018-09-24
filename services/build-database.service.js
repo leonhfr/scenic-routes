@@ -45,8 +45,9 @@ const buildDatabase = async (flush) => {
   const pagesPerBatch = 20;
 
   // MAX 3600 calls / hour
-  const startPage = 80;
-  const targetBatch = 100;
+  // TODO: promise.some or handle concurrency
+  const startPage = 20;
+  const targetBatch = 40;
   bar.start(2 * (targetBatch - startPage), 0);
 
   for (let i = startPage + 1; i <= targetBatch; i++) {

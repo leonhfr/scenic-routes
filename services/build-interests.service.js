@@ -10,10 +10,23 @@ const idRedisMapFilePath = path.resolve(__dirname, '../data/id-redis-map.json');
 const clustersFilePath = path.resolve(__dirname, '../data/clusters.json');
 const rplotFilePath = path.resolve(__dirname, '../data/rplot.json');
 const interestsRawFilePath = path.resolve(__dirname, '../data/interests-raw.json');
-const interestsFilterFilePath = path.resolve(__dirname, '../data/interests-filter.json');
+// const interestsFilterFilePath = path.resolve(__dirname, '../data/interests-filter.json');
 const interestsFilePath = path.resolve(__dirname, '../data/interests.geo.json');
 
 const buildInterests = async (epsilon, minPts) => {
+
+  // eslint-disable-next-line
+  console.log('*** Building interests from pixels ***');
+
+  // 0: flush the db of interest
+  // TODO: flush
+  // eslint-disable-next-line
+  console.log('Flushing Redis database...');
+  const dbKeys = await redis.keys(`${global.redisPrefix}-interest-*`);
+  const pipeline = redis.pipeline();
+  dbKeys.forEach(key => pipeline.del(key));
+  await pipeline.exec();
+
   // eslint-disable-next-line
   console.log(`Building clusters with epsilon = ${epsilon} and MinPts = ${minPts}`);
 
@@ -99,13 +112,19 @@ const buildInterests = async (epsilon, minPts) => {
       properties.interest = Math.min(properties.interest, interest);
     });
 
-
     const points = turf.featureCollection(coords);
-    const location = turf.centroid(points);
+    const location = turf.getCoord(turf.centroid(points));
     const interest = turf.point(
-      turf.getCoord(location),
+      location,
       properties
     );
+
+    // TODO: save it to the databse, does this work?
+    const lat = Math.round(parseFloat(location[1]) * 100000);
+    const lng = Math.round(parseFloat(location[0]) * 100000);
+    const key = `${global.redisPrefix}-interest-${lat}-${lng}`;
+    await redis.hmset(key, properties);
+
     interestsRaw.push(interest);
   }));
   const interestsRawFile = JSON.stringify(interestsRaw);
@@ -113,28 +132,14 @@ const buildInterests = async (epsilon, minPts) => {
   // eslint-disable-next-line
   console.log(`Built the interests objects and saved them to a JSON file (${interestsRawFile.length} bytes).`);
 
-  // 6: filter weak interests points
-  // TODO: better filter
-  const interestsFilter = interestsRaw.filter(interest => {
-    // if there is only one pic, leave it out unless it is in the top 500 (interest 1 or 2)
-    if (interest.properties.pics === 1 && interest.properties.interest > 2) return false;
-    // if the views is below 500, leave it out
-    if (interest.properties.views < 500) return false;
-    return true;
-  });
-  const interestsFilterFile = JSON.stringify(interestsFilter);
-  fs.writeFileSync(interestsFilterFilePath, interestsFilterFile, 'utf8');
-  // eslint-disable-next-line
-  console.log(`Filtered the interests and saved them to a JSON file (${interestsFilterFile.length} bytes).`);
-
   // 7: convert to geojson
-  const interests = turf.featureCollection(interestsFilter);
+  const interests = turf.featureCollection(interestsRaw);
   const interestsFile = JSON.stringify(interests);
   fs.writeFileSync(interestsFilePath, interestsFile, 'utf8');
   // eslint-disable-next-line
   console.log(`Converted interests to GeoJSON and saved them to a GeoJSON file (${interestsFile.length} bytes).`);
 
-  // 8: return some stats
+  // 10: return some stats
   const reduction = parseFloat((clusters.length / keys.length).toFixed(2));
   return {
     epsilon: e,
