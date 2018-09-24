@@ -12,6 +12,7 @@ module.exports.buildDatabase = async (ctx, next) => {
   // TODO: options for dates in body
   // TODO: store options in db
   // TODO: option to flush db in body
+  // TODO: refactor in general
   const success = await interestsModel.buildDatabase(false);
   if (success) {
     ctx.body = await interestsModel.getInterestsCount();

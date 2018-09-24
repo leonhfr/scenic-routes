@@ -114,6 +114,7 @@ const buildInterests = async (epsilon, minPts) => {
   console.log(`Built the interests objects and saved them to a JSON file (${interestsRawFile.length} bytes).`);
 
   // 6: filter weak interests points
+  // TODO: better filter
   const interestsFilter = interestsRaw.filter(interest => {
     // if there is only one pic, leave it out unless it is in the top 500 (interest 1 or 2)
     if (interest.properties.pics === 1 && interest.properties.interest > 2) return false;

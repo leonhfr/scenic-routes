@@ -1,11 +1,14 @@
 'use strict';
 
+const routesModel = require('../models/routes.model');
+
 module.exports.getRoutes = async (ctx, next) => {
-  ctx.body = {
-    'Lng A': ctx.params.alng,
-    'Lat A': ctx.params.alat,
-    'Lng B': ctx.params.blng,
-    'Lat B': ctx.params.blat,
-  };
+  const coords = [
+    ctx.params.alng,
+    ctx.params.alat,
+    ctx.params.blng,
+    ctx.params.blat
+  ].map(Number);
+  ctx.body = await routesModel.getRoutes(...coords);
   ctx.status = 200;
 };
