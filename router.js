@@ -8,6 +8,8 @@ const routesController   = require('./controllers/routes.controller');
 
 const router = require('koa-router')();
 
+router.get('/routes/:alng/:alat/:blng/:blat', routesController.getRoutes);
+
 router.get('/map/boundaries', boundsController.getBoundaries);
 
 router.get('/interests/compile/heatmap', authMiddleware, interestsController.compileHeatmap);
