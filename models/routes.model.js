@@ -24,7 +24,7 @@ module.exports.getRoutes = async (alng, alat, blng, blat) => {
     };
   });
   const interestsDist = distances.filter(dist => {
-    return (dist.dist.properties.dist < 0.3);
+    return (dist.dist.properties.dist < 0.1);
   });
   const interests = [];
   const pipeline = redis.pipeline();
@@ -37,17 +37,124 @@ module.exports.getRoutes = async (alng, alat, blng, blat) => {
       });
     }));
   await pipeline.exec();
+  // number function of distance travelled
+  const target = Math.ceil(distanceTravelled / 500) +
+    Math.floor(Math.random() * Math.floor(distanceTravelled / 500));
   const ints = interests.sort((a, b) => {
     return a.interest - b.interest;
-  }).slice(0, 10);
-  // TODO: sort by interest, pics, views
-  const n = 2 + Math.floor(Math.random() * Math.floor(2));
-  // TODO: number function of distance travelled
-  const random = ints.pickRandoms(n);
-  // TODO: first select 3 random ones in the top10
+  }).slice(0, 2* target);
+  // sort by interest, pics, views
+  // eslint-disable-next-line
+  // console.log(target);
+  const random = ints.pickRandoms(target);
+  // TODO: order waypoints according to distances
+
+  const route = [];
+  // AFTER THIS THE CODE BECOMES SHIT (before too actually)
+  // find first let
+  const firstLeg = {
+    id: 0,
+    distance: Infinity
+  };
+  for (let i = 0; i < random.length; i++) {
+    const waypointCoords = random[i].key.split('-');
+    const lng = parseInt(waypointCoords[waypointCoords.length - 1]) / 100000;
+    const lat = parseInt(waypointCoords[waypointCoords.length - 2]) / 100000;
+    const res = await axios.get(`${mapboxAPI}/mapbox/walking/${alng},${alat};${lng},${lat}?geometries=geojson&access_token=${token}`);
+    const distance = res.data.routes[0].distance;
+    if (distance < firstLeg.distance) {
+      firstLeg.id = i;
+      firstLeg.distance = distance;
+    }
+  }
+  route.push(random[firstLeg.id]);
+  random.splice(firstLeg.id, 1);
+
+  // now order the waypoints with the first
+  while (random.length) {
+    const mem = {
+      id: 0,
+      distance: Infinity
+    };
+    for (let i = 0; i < random.length; i++) {
+      const waypointCoords = random[i].key.split('-');
+      const lng = parseInt(waypointCoords[waypointCoords.length - 1]) / 100000;
+      const lat = parseInt(waypointCoords[waypointCoords.length - 2]) / 100000;
+      const res = await axios.get(`${mapboxAPI}/mapbox/walking/${alng},${alat};${lng},${lat}?geometries=geojson&access_token=${token}`);
+      const distance = res.data.routes[0].distance;
+      if (distance < firstLeg.distance) {
+        mem.id = i;
+        mem.distance = distance;
+      }
+    }
+    route.push(random[mem.id]);
+    random.splice(mem.id, 1);
+  }
+
+  // route is ordered, let's get the new route
+
+  const waypoints = [];
+  for (let r of route) {
+    const waypointCoords = r.key.split('-');
+    const lng = parseInt(waypointCoords[waypointCoords.length - 1]) / 100000;
+    const lat = parseInt(waypointCoords[waypointCoords.length - 2]) / 100000;
+    waypoints.push(`${lng},${lat}`);
+  }
+  const waypointsRoute = waypoints.join(';');
+
+  const finalRouteReq = await axios.get(`${mapboxAPI}/mapbox/walking/${alng},${alat};${waypointsRoute};${blng},${blat}?geometries=geojson&access_token=${token}`);
+  const finalRouteData = finalRouteReq.data.routes[0];
   // TODO: format the route again, with interests data
   // TODO: return new route
-  return random;
+
+  // now the code becomes a bit better
+  const finalLine = turf.lineString(
+    finalRouteData.geometry.coordinates,
+    { forLayer: 'line' }
+  );
+  const start = turf.point(
+    finalRouteReq.data.waypoints[0].location,
+    {
+      forLayer: 'startend',
+      name: finalRouteReq.data.waypoints[0].name
+    }
+  );
+  const end = turf.point(
+    finalRouteReq.data.waypoints[finalRouteReq.data.waypoints.length - 1].location,
+    {
+      forLayer: 'startend',
+      name: finalRouteReq.data.waypoints[finalRouteReq.data.waypoints.length - 1].name
+    }
+  );
+
+  const interestsGeometry = [];
+  for (let i = 0; i < route.length; i++) {
+    interestsGeometry.push(turf.point(
+      finalRouteReq.data.waypoints[i+1].location,
+      {
+        forLayer: 'interests',
+        name: finalRouteReq.data.waypoints[i+1].name,
+        ...route[i]
+      }
+    ));
+  }
+
+  const geometry = turf.featureCollection([
+    finalLine,
+    start,
+    end,
+    ...interestsGeometry
+  ]);
+
+  const { legs, duration, distance } = finalRouteData;
+  const dataToSendBack = {
+    legs, duration, distance
+  };
+
+  return {
+    geometry,
+    data: dataToSendBack
+  };
 };
 
 Array.prototype.pickRandoms = function (n) {
