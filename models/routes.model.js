@@ -110,7 +110,7 @@ module.exports.getRoutes = async (alng, alat, blng, blat) => {
   const offsetDeg = 0.0001 * 5; // approx 10m * 5
   const bbox = computeBoundingBox(shortestRoute.polyline, offsetDeg);
   // eslint-disable-next-line
-  console.log('Distance: ', shortestRoute.distance);
+  // console.log('Distance: ', shortestRoute.distance);
   // 3: make the keys into points
   const allKeys = await redis.keys(`${global.redisPrefix}-interest-*`);
   const points = makeCoordsFromKeys(allKeys)
@@ -131,7 +131,7 @@ module.exports.getRoutes = async (alng, alat, blng, blat) => {
   // 7: get the 7 most interesting ones
   const target = Math.min(2 + Math.round(shortestRoute.distance / 150), 12);
   // eslint-disable-next-line
-  console.log('Target: ', target);
+  // console.log('Target: ', target);
   interests = interests.sort((a, b) => {
     return a.properties.interest - b.properties.interest;
   }).sort((a, b) => {
@@ -139,7 +139,7 @@ module.exports.getRoutes = async (alng, alat, blng, blat) => {
   }).slice(0, target);
   const n = 1 + Math.ceil(interests.length * 0.3);
   // eslint-disable-next-line
-  console.log('n: ', n);
+  // console.log('n: ', n);
   const interestSelection = pickSomeInterests(interests, n);
   // 8: get the time matrix
   let coords = [alng, alat];
@@ -161,6 +161,15 @@ module.exports.getRoutes = async (alng, alat, blng, blat) => {
 
   async function newRoute (startEndCoords, picks, others) {
     let coords = [...startEndCoords.slice(0, 2)];
+
+    // TODO: looks like sometimes picks and/or others have invalid values
+    // sanitizing the data as a quick fix
+    let len = picks.length;
+    picks = picks.filter(el => (typeof el !== 'undefined'));
+    others = others.filter(el => (typeof el !== 'undefined'));
+
+    // console.log(picks);
+    // if (picks.length !== len) console.log('filtered');
     picks.forEach(waypoint => {
       coords = coords.concat(waypoint.geometry.coordinates);
     });
@@ -216,7 +225,7 @@ module.exports.getRoutes = async (alng, alat, blng, blat) => {
     const data = { legs, duration, distance };
 
     return { geometry, data };
-  };
+  }
 
   return await newRoute(startEndCoords, orderedPicks, interestSelection.others);
 };
