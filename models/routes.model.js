@@ -159,7 +159,7 @@ module.exports.getRoutes = async (alng, alat, blng, blat) => {
     orderedPicks.push(interestSelection.picks[order[i]-1]);
   }
 
-  const newRoute = async (startEndCoords, picks, others) => {
+  async function newRoute (startEndCoords, picks, others) {
     let coords = [...startEndCoords.slice(0, 2)];
     picks.forEach(waypoint => {
       coords = coords.concat(waypoint.geometry.coordinates);
