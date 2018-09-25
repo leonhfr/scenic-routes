@@ -21,7 +21,7 @@ const mapboxService = async (service, coords) => {
       waypoints.push(`${coords[i]},${coords[i+1]}`);
     }
     request.push(waypoints.join(';'));
-    request.push(`?access_token=${token}`);
+    request.push(`?sources=0&access_token=${token}`);
   }
   const result = await axios.get(request.join(''));
   return result.data;

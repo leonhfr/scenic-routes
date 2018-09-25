@@ -8,9 +8,7 @@ const routesController   = require('./controllers/routes.controller');
 
 const router = require('koa-router')();
 
-// TODO: remove refactor
 router.get('/routes/:alng/:alat/:blng/:blat', routesController.getRoutes);
-router.get('/routes2/:alng/:alat/:blng/:blat', routesController.getRoutes2);
 
 router.get('/map/boundaries', boundsController.getBoundaries);
 
