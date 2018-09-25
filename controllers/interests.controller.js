@@ -24,7 +24,7 @@ module.exports.buildInterests = async (ctx, next) => {
   // options:
   // - epsilon - neighborhood radius
   // - n pixels to create a cluster
-  ctx.body = await interestsModel.buildInterests(20, 2);
+  ctx.body = await interestsModel.buildInterests(16, 2);
   ctx.status = 200;
 };
 

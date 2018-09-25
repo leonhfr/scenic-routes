@@ -1,13 +1,14 @@
 'use strict';
 
-const axios = require('axios');
-const redis = require('./redis');
 const turf = require('@turf/turf');
+const redis = require('./redis');
+const mapboxService = require('../services/mapbox.service');
 
+const axios = require('axios');
 const mapboxAPI = 'https://api.mapbox.com/directions/v5';
+const token = process.env.MAPBOX_ACCESS_TOKEN;
 
 module.exports.getRoutes = async (alng, alat, blng, blat) => {
-  const token = process.env.MAPBOX_ACCESS_TOKEN;
   const res = await axios.get(`${mapboxAPI}/mapbox/walking/${alng},${alat};${blng},${blat}?geometries=geojson&access_token=${token}`);
   const origRoute = turf.lineString(res.data.routes[0].geometry.coordinates);
   const distanceTravelled = res.data.routes[0].distance;
@@ -56,6 +57,7 @@ module.exports.getRoutes = async (alng, alat, blng, blat) => {
     id: 0,
     distance: Infinity
   };
+  // TODO: sometimes key is undefined
   for (let i = 0; i < random.length; i++) {
     const waypointCoords = random[i].key.split('-');
     const lng = parseInt(waypointCoords[waypointCoords.length - 1]) / 100000;
