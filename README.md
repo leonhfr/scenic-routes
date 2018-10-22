@@ -4,23 +4,6 @@
 
 You are new to a city. You want to go from A to B. However, the route between those two points is always the same: the shortest one. Taking the same route everyday is boring; I wanted new routes that make me see interesting stuff. Scenic Routes is a web application written in JavaScript that provides just that.
 
-## Tech stack
-
-Front-end:
-- [React](https://reactjs.org/)
-- [Redux](https://redux.js.org/)
-- [Mapbox](https://www.mapbox.com/)
-
-Back-end:
-- [Koa](https://koajs.com/)
-- [Redis](https://redis.io/)
-- [Turf.js](http://turfjs.org/)
-- [OPTICS (density clustering)](https://github.com/uhho/density-clustering)
-
-APIs:
-- [Flickr](https://www.flickr.com/services/api/)
-- [Mapbox](https://www.mapbox.com/)
-
 ## Screenshots and details
 
 <p align="center">
@@ -70,6 +53,23 @@ atom .env
 ```
 2. If you run the app for the first time, you will need to build the database and the static GeoJSON files. Run `npm run build-db`
 3. Then, to run the back-end `npm start`
+
+## Tech stack
+
+Front-end:
+- [React](https://reactjs.org/)
+- [Redux](https://redux.js.org/)
+- [Mapbox](https://www.mapbox.com/)
+
+Back-end:
+- [Koa](https://koajs.com/)
+- [Redis](https://redis.io/)
+- [Turf.js](http://turfjs.org/)
+- [OPTICS (density clustering)](https://github.com/uhho/density-clustering)
+
+APIs:
+- [Flickr](https://www.flickr.com/services/api/)
+- [Mapbox](https://www.mapbox.com/)
 
 ## Author
 
