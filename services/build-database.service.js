@@ -63,12 +63,7 @@ const buildDatabase = async (flush, startPage, targetPage) => {
   bar.stop();
 
   const promises = []; // TODO implement Promise.some
-
-  // TODO: compile JSON
-
   return true;
-
-  // TODO: last update date to database
 };
 
 module.exports = buildDatabase;

@@ -27,10 +27,3 @@ module.exports.buildInterests = async (ctx, next) => {
   ctx.body = await interestsModel.buildInterests(16, 2);
   ctx.status = 200;
 };
-
-// module.exports.updateDatabase = async (ctx, next) => {
-//   // TODO: get options from db
-//   // TODO: update according to options
-//   await interestsModel.updateDatabase();
-//   ctx.status = 200;
-// };

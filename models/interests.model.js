@@ -17,7 +17,6 @@ module.exports.getInterestsCount = async () => {
   return count;
 };
 
-// TODO: only get compiled JSON
 module.exports.compileHeatmap = compileHeatmap;
 
 module.exports.buildDatabase = buildDatabase;
