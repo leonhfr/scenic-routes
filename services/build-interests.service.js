@@ -21,8 +21,8 @@ const buildInterests = async (epsilon, minPts) => {
   // 0: flush the db of interest
   // TODO: flush
   // eslint-disable-next-line
-  console.log('Flushing Redis database...');
-  const dbKeys = await redis.keys(`${global.redisPrefix}-interest-*`);
+  console.log('Flushing Redis database (interests)...');
+  const dbKeys = await redis.keys(`${process.env.REDIS_PREFIX}-interest-*`);
   const pipeline = redis.pipeline();
   dbKeys.forEach(key => pipeline.del(key));
   await pipeline.exec();
@@ -31,7 +31,7 @@ const buildInterests = async (epsilon, minPts) => {
   console.log(`Building clusters with epsilon = ${epsilon} and MinPts = ${minPts}`);
 
   // 1: build mapping
-  const keys = await redis.keys(`${global.redisPrefix}-pixel-*`);
+  const keys = await redis.keys(`${process.env.REDIS_PREFIX}-pixel-*`);
   const keysFile = JSON.stringify(keys);
   fs.writeFileSync(idRedisMapFilePath, keysFile, 'utf8');
   // eslint-disable-next-line
@@ -122,7 +122,7 @@ const buildInterests = async (epsilon, minPts) => {
     // TODO: save it to the databse, does this work?
     const lat = Math.round(parseFloat(location[1]) * 100000);
     const lng = Math.round(parseFloat(location[0]) * 100000);
-    const key = `${global.redisPrefix}-interest-${lat}-${lng}`;
+    const key = `${process.env.REDIS_PREFIX}-interest-${lat}-${lng}`;
     await redis.hmset(key, properties);
 
     interestsRaw.push(interest);

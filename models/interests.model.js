@@ -8,7 +8,7 @@ const compileHeatmap = require('../services/compile-heatmap.service');
 module.exports.getInterestsCount = async () => {
   // TODO: move the count to a JSON file prop
   let count = 0;
-  const keys = await redis.keys(`${global.redisPrefix}-pixel-*`);
+  const keys = await redis.keys(`${process.env.REDIS_PREFIX}-pixel-*`);
   const pipeline = redis.pipeline();
   keys.forEach(key => pipeline.hget(key, 'pics', (err, res) => {
     count += parseInt(res);

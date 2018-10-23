@@ -112,7 +112,7 @@ module.exports.getRoutes = async (alng, alat, blng, blat) => {
   // eslint-disable-next-line
   // console.log('Distance: ', shortestRoute.distance);
   // 3: make the keys into points
-  const allKeys = await redis.keys(`${global.redisPrefix}-interest-*`);
+  const allKeys = await redis.keys(`${process.env.REDIS_PREFIX}-interest-*`);
   const points = makeCoordsFromKeys(allKeys)
     .map(obj => turf.point(obj.coords, {key: obj.key}));
   // 4: filter the points so that they fall in the bounding box

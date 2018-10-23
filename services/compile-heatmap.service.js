@@ -9,7 +9,7 @@ const dataFilePath = path.resolve(__dirname, '../data/heatmap.geo.json');
 
 const compileHeatmap = async () => {
   const features = [];
-  const keys = await redis.keys(`${global.redisPrefix}-pixel-*`);
+  const keys = await redis.keys(`${process.env.REDIS_PREFIX}-pixel-*`);
   const pipeline = redis.pipeline();
   keys.forEach(key => pipeline.hmget(key, 'pics', (err, res) => {
     const coords = key.split('-');

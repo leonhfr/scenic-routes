@@ -7,12 +7,12 @@ const flickrCall = require('./flickr.service');
 const lastMidnight = require('../utils/last-midnight.utils');
 const processBatch = require('./process-batch.service');
 
-const buildDatabase = async (flush) => {
+const buildDatabase = async (flush, startPage, targetPage) => {
   if (flush) {
     // options to flush all pixels from db
     // eslint-disable-next-line
     console.log('Flushing Redis database...');
-    const keys = await redis.keys(`${global.redisPrefix}-pixel-*`);
+    const keys = await redis.keys(`${process.env.REDIS_PREFIX}-pixel-*`);
     const pipeline = redis.pipeline();
     keys.forEach(key => pipeline.del(key));
     await pipeline.exec();

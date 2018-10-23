@@ -17,7 +17,6 @@ const app = module.exports = new Koa();
 
 const router          = require('./router.js');
 const errorHandler    = require('./middlewares/error-handler');
-const globalVariables = require('./middlewares/global-variables');
 const data            = path.resolve(__dirname, './data');
 
 app
@@ -26,7 +25,6 @@ app
   .use(mount('/data', serve(data)))
   .use(bodyParser())
   .use(errorHandler)
-  .use(globalVariables)
   .use(router.allowedMethods())
   .use(router.routes())
   .use(compress());

@@ -9,7 +9,7 @@ const processBatch = async (batch, page) => {
     const long = parseFloat(photo.longitude);
     const pixelLat  = Math.round(lat  * 100000);
     const pixelLong = Math.round(long * 100000);
-    const key = `${global.redisPrefix}-pixel-${pixelLat}-${pixelLong}`;
+    const key = `${process.env.REDIS_PREFIX}-pixel-${pixelLat}-${pixelLong}`;
 
     const score = await redis.hget(key, 'pics');
     if (score) {
