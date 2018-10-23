@@ -48,10 +48,10 @@ cd scenic-routes
 cp .env.example .env
 # Atom or your favorite editor:
 atom .env
-# Adjust variables.
+# Adjust variables, add Flickr and Mapbox keys.
 # Save the file.
 ```
-2. If you run the app for the first time, you will need to build the database and the static GeoJSON files. Run `npm run build-db`
+2. If you run the app for the first time, you will need to build the database and the static GeoJSON files. Run `npm run first-time`
 3. Then, to run the back-end `npm start`
 
 ## Tech stack

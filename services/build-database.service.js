@@ -46,11 +46,9 @@ const buildDatabase = async (flush, startPage, targetPage) => {
 
   // MAX 3600 calls / hour
   // TODO: promise.some or handle concurrency
-  const startPage = 20;
-  const targetBatch = 40;
-  bar.start(2 * (targetBatch - startPage), 0);
+  bar.start(2 * (targetPage - startPage), 0);
 
-  for (let i = startPage + 1; i <= targetBatch; i++) {
+  for (let i = startPage + 1; i <= targetPage; i++) {
     const batch = await flickrCall({
       bbox,
       sort,
